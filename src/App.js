@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import React,{ Component } from 'react';
+import {CardList} from './component/card-list/card-list.component';
+import {SearchBox} from './component/card-list/search-box.components';
 import './App.css';
 
-function App() {
+class App extends Component {
+  constructor(){
+   super();
+
+   this.state = {
+       monster:[],
+       searchfields:''
+  };
+}
+
+componentDidMount(){
+  fetch('https://jsonplaceholder.typicode.com/users')
+  .then(response => response.json())
+  .then(users => this.setState({monster: users}));
+}
+whenchange = e => {
+       this.setState({searchfields: e.target.value});
+     };
+ 
+ render() {
+  const {monster,searchfields} = this.state;
+  const fliteredMonsters = monster.filter(monster => 
+                           monster.name.toString().toLowerCase().includes(searchfields.toString().toLowerCase()));
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+       <h1>Monster Rolodex</h1>
+       <SearchBox placeholder='search monster' 
+                 handelchange={this.whenchange}/>
+       <CardList monster={fliteredMonsters} />
     </div>
-  );
-}
+     );
+   }
+  }
 
 export default App;
